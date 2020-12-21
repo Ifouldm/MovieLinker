@@ -4,17 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Linker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <form id="filmEntryForm">
-        <label for="film1">Enter your first movie</label>
-        <input id="film1" name="film1" type="text" value="The matrix">
-        <label for="film2">Enter your second movie</label>
-        <input id="film2" name="film1" type="text" value="john wick">
-        <input type="submit">
+        <container class="container">
+
+            <div class="card">
+                <label for="film1">Enter your first movie</label>
+                <input id="film1" name="film1" type="text" value="The matrix">
+            </div>
+            <div class="card">
+                <label for="film2">Enter your second movie</label>
+                <input id="film2" name="film1" type="text" value="john wick">
+            </div>
+        </container>
+        <container class="container">
+            <input class="button" value="Compare Films" type="submit">
+        </container>
     </form>
     <hr>
-    <container id="results"></container>
+    <div id="loading">
+        <img class="loading" src="loading.svg">
+        <hr class="loading">
+    </div>
+    <container id="results" class="container">
+        <div class="card movieCard">
+            <h1 class=title>Guardians of the Galaxy</h1>
+            <img class="poster" src="https://m.media-amazon.com/images/M/MV5BMTAwMjU5OTgxNjZeQTJeQWpwZ15BbWU4MDUxNDYxODEx._V1_SX300.jpg">
+            <p class="plot">A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.</p>
+            <p class="year">Year: 2014</p>
+            <p class="rated">Rated: PG-13"</p>
+            <p class="runtime">Rated: PG-13"</p>
+            <p class="genres">Genres: Action, Adventure, Comedy, Sci-Fi</p>
+            <p class="scores">Scores: 
+                "Metascore": "76",
+                "imdbRating": "8.0"</p>
+            <p><a class="imdbLink" href="tt2015381">IMDB Link</a></p>
+        </div>
+        <div class="card movieCard">
+            <h1 class=title>Guardians of the Galaxy</h1>
+            <img class="poster" src="https://m.media-amazon.com/images/M/MV5BMTAwMjU5OTgxNjZeQTJeQWpwZ15BbWU4MDUxNDYxODEx._V1_SX300.jpg">
+            <p class="plot">A group of intergalactic criminals must pull together to stop a fanatical warrior with plans to purge the universe.</p>
+            <p class="year">Year: 2014</p>
+            <p class="rated">Rated: PG-13"</p>
+            <p class="runtime">Rated: PG-13"</p>
+            <p class="genres">Genres: Action, Adventure, Comedy, Sci-Fi</p>
+            <p class="scores">Scores: 
+                "Metascore": "76",
+                "imdbRating": "8.0"</p>
+            <p><a class="imdbLink" href="tt2015381">IMDB Link</a></p>
+        </div>
+    </container>
+    <div id="overlap" class="card overlapCard">
+        <h1>Common in both:</h1>
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
