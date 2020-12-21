@@ -1,6 +1,6 @@
 const APIKEY = 'a3ed1e37';
 
-document.getElementById("filmEntryForm").addEventListener("submit", function(event){
+document.getElementById("filmEntryForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
     const film1Element = document.getElementById('film1');
@@ -9,35 +9,48 @@ document.getElementById("filmEntryForm").addEventListener("submit", function(eve
     const fetchUrl1 = `http://www.omdbapi.com/?t=${film1Element.value}&apikey=${APIKEY}`;
     const fetchUrl2 = `http://www.omdbapi.com/?t=${film2Element.value}&apikey=${APIKEY}`;
 
-    fetch('film1.json')
-        .then(response => response.json())
-        .then(data => console.log(data));
+    // let film1Formatted = fetch('film1.json')
+    //     .then(response => response.json())
+    //     .then(formatData);
 
-    fetch('film2.json')
-        .then(response => response.json())
-        .then(data => console.log(data));
+    // let film2Formatted = fetch('film2.json')
+    //     .then(response => response.json())
+    //     .then(formatData);
 
-    displayResults([
-        {
-            title: 'Director',
-            members: [
-                'James Gunn'
-            ]
+    getMovieData('film1.json', 'film2.json');
+});
+
+async function getMovieData(url1, url2) {
+    const moviesRes = await Promise.all([
+        fetch(url1),
+        fetch(url2)
+    ]);
+
+    const movieJson = await Promise.all([
+        moviesRes[0].json(),
+        moviesRes[1].json()
+    ])
+
+    displayResults(movieJson[0], movieJson[1], getCommonElements(movieJson[0], movieJson[1]));
+}
+
+function getCommonElements(movie1, movie2) {
+    return [{
+            title: 'Directors',
+            members: movie1.Director.split(',').filter(individual => movie2.Director.split(',').includes(individual)),
         },
         {
             title: 'Cast',
-            members: [
-                'Chris Pratt',
-                'Zoe Saldana'
-            ]
-    }]);
-});
-
-function getCommonElements() {
-    
+            members: movie1.Actors.split(',').filter(individual => movie2.Actors.split(',').includes(individual)),
+        },
+        {
+            title: 'Writers',
+            members: movie1.Writer.split(',').filter(individual => movie2.Writer.split(',').includes(individual)),
+        }
+    ];
 }
 
-function displayResults(results) {
+function displayResults(movie1, movie2, results) {
     const resultsElement = document.getElementById('results');
 
     results.forEach(category => {
