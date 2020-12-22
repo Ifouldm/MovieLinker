@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Linker</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <link rel="preload" id="autocompleteData" href="/data/data.json" as="fetch"></link>
 </head>
 <body>
     <form id="filmEntryForm">
@@ -12,11 +13,11 @@
 
             <div class="card">
                 <label for="film1">Enter your first movie</label>
-                <input id="film1" name="film1" type="text" value="The matrix">
+                <input id="film1" type="text">
             </div>
             <div class="card">
                 <label for="film2">Enter your second movie</label>
-                <input id="film2" name="film1" type="text" value="john wick">
+                <input id="film2" type="text">
             </div>
         </container>
         <container class="container">
@@ -25,7 +26,7 @@
     </form>
     <hr>
     <div id="loading">
-        <img class="loading" src="loading.svg">
+        <img class="loading" src="assets/loading.svg">
         <hr class="loading">
     </div>
     <container id="results" class="container">
@@ -59,6 +60,8 @@
     <div id="overlap" class="card overlapCard">
         <h1>Common in both:</h1>
     </div>
-    <script src="main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="assets/main.js"></script>
 </body>
 </html>

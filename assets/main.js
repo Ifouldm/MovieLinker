@@ -1,17 +1,33 @@
 const APIKEY = 'a3ed1e37';
 const loadingElement = document.getElementById('loading');
+const film1Element = document.getElementById('film1');
+const film2Element = document.getElementById('film2');
 
-document.getElementById("filmEntryForm").addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const film1Element = document.getElementById('film1');
-    const film2Element = document.getElementById('film2');
-
-    const fetchUrl1 = `http://www.omdbapi.com/?t=${film1Element.value}&apikey=${APIKEY}`;
-    const fetchUrl2 = `http://www.omdbapi.com/?t=${film2Element.value}&apikey=${APIKEY}`;
-
-    getMovieData('film1.json', 'film2.json');
-});
+const films = [{
+        "value": "tt0111161",
+        "label": "The Shawshank Redemption (1994)"
+    },
+    {
+        "value": "tt0468569",
+        "label": "The Dark Knight (2008)"
+    },
+    {
+        "value": "tt1375666",
+        "label": "Inception (2010)"
+    },
+    {
+        "value": "tt0137523",
+        "label": "Fight Club (1999)"
+    },
+    {
+        "value": "tt0110912",
+        "label": "Pulp Fiction (1994)"
+    },
+    {
+        "value": "tt0109830",
+        "label": "Forrest Gump (1994)"
+    }
+];
 
 async function getMovieData(url1, url2) {
     loadingElement.style.display = 'block';
@@ -88,3 +104,12 @@ function displayResults(movies, results) {
         overlapCard.style.display = 'block';
     });
 }
+
+function search(term, res) {
+    return films.filter(a => !a.label.toLowerCase().includes(term.toLowerCase));
+}
+
+$("#film1").autocomplete({
+    minLength: 3,
+    source: search
+});
