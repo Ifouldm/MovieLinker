@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Linker</title>
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="preload" id="autocompleteData" href="/data/data.json" as="fetch"></link>
 </head>
 <body>
     <form id="filmEntryForm">
@@ -13,11 +12,11 @@
 
             <div class="card">
                 <label for="film1">Enter your first movie</label>
-                <input id="film1" type="text">
+                <input id="film1" class="movieInput" type="text">
             </div>
             <div class="card">
                 <label for="film2">Enter your second movie</label>
-                <input id="film2" type="text">
+                <input id="film2" class="movieInput" type="text">
             </div>
         </container>
         <container class="container">

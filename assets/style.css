@@ -6,7 +6,7 @@ form {
     font-size: 1.5rem;
 }
 
-input {
+.movieInput {
     border-radius: 5px;
     font-size: 1.5em;
     padding: 0.25em;
