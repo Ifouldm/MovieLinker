@@ -93,6 +93,14 @@ function displayResults(movies, results) {
     });
 }
 
+// Resets the result data so that the search can re rerun
+function reset() {
+    const overlapCard = document.getElementById('overlap');
+    const title = overlapCard.firstElementChild;
+    overlapCard.innerHTML = '';
+    overlapCard.appendChild(title);
+}
+
 // Asynchronous function to retreive and parse the json data for a list of urls
 async function getMovieData(urls) {
     loadingElement.style.display = 'block';
@@ -109,6 +117,8 @@ async function getMovieData(urls) {
 document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
     event.preventDefault();
 
+    reset();
+
     const filmsElements = document.getElementsByClassName('movieInput');
 
     const seachTerms = [...filmsElements].map((input) => input.value);
@@ -121,10 +131,11 @@ document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
     getMovieData(urls);
 });
 
+// Autocomplete search algorthim, currently simple regex
 function searchAutocomplete(req, res) {
     if (films) {
         const regex = RegExp(req.term.trim(), 'i');
-        res(films.filter((a) => regex.test(a.label)));
+        res(films.filter((film) => regex.test(film.label)));
     }
 }
 

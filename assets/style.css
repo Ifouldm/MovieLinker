@@ -27,12 +27,22 @@
 }
 
 .list {
-    list-style-type: circle;
+    list-style-type: none;
     list-style-position: inside;
+    display: inline-block;
+    flex-direction: column;
+    text-align: start;
+    
+}
+
+.list li {
+    border: 1px solid lightgray;
+    border-radius: 0.25rem;
+    padding: 10px 40px;
+    margin: 5px;
 }
 
 .container {
-    display: flex;
     width: 100%;
     justify-content: space-between;
 }
@@ -78,7 +88,6 @@
 
 .card {
     margin: 20px;
-    width: 50%;
     padding: 10px;
     border-radius: 0.35rem;
     border-color: lightgray;
@@ -86,6 +95,16 @@
     border-width: 1px;
     box-shadow: 6px 6px 5px lightgray;
     text-align: center;
+}
+
+@media only screen and (min-width: 1024px) {
+    .container {
+        display: flex;
+    }
+
+    .card {
+        width: 50%;
+    }
 }
 
 .title {
@@ -103,9 +122,19 @@
     max-width: 75%;
 }
 
+.imdbLink {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.imdbLink:hover {
+    color: #0056b3;
+}
+
 .overlapCard {
     display: none;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .movieCard {
