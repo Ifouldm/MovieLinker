@@ -1,50 +1,47 @@
-const APIKEY = 'a3ed1e37';
 const loadingElement = document.getElementById('loading');
 
-const films = [{
-    value: 'tt0111161',
-    label: 'The Shawshank Redemption (1994)',
-},
-{
-    value: 'tt0468569',
-    label: 'The Dark Knight (2008)',
-},
-{
-    value: 'tt1375666',
-    label: 'Inception (2010)',
-},
-{
-    value: 'tt0137523',
-    label: 'Fight Club (1999)',
-},
-{
-    value: 'tt0110912',
-    label: 'Pulp Fiction (1994)',
-},
-{
-    value: 'tt0109830',
-    label: 'Forrest Gump (1994)',
-},
-];
+let films;
+
+// Populate the autocomplete dictionary
+async function getAutocompleteData() {
+    const filmData = await fetch('data/data.json');
+    films = await filmData.json();
+}
+
+getAutocompleteData();
+
+// Search the searchField for the given searchTerm if it exists return true
+// TODO: improve comparison criteria
+function search(searchTerm, searchField) {
+    const sanitisedTerm = searchTerm
+        .replace(/[^\w\s]|_/g, '') // Remove punctuation etc
+        .trim() // Remove whitespace
+        .split(' ')
+        .slice(0, 2)
+        .join(' '); // get first 2 words
+    const regex = RegExp(sanitisedTerm, 'i');
+    return regex.test(searchField);
+}
 
 // Currently only works with 2 movies
 // TODO: allow multiple movies
 function getCommonElements(movies) {
     return [{
         title: 'Directors',
-        members: movies[0].Director.split(',').filter((individual) => movies[1].Director.split(',').includes(individual)),
+        members: movies[0].Director.split(',').filter((individual) => search(individual, movies[1].Director)),
     },
     {
         title: 'Cast',
-        members: movies[0].Actors.split(',').filter((individual) => movies[1].Actors.split(',').includes(individual)),
+        members: movies[0].Actors.split(',').filter((individual) => search(individual, movies[1].Actors)),
     },
     {
         title: 'Writers',
-        members: movies[0].Writer.split(',').filter((individual) => movies[1].Writer.split(',').includes(individual)),
+        members: movies[0].Writer.split(',').filter((individual) => search(individual, movies[1].Writer)),
     },
     ];
 }
 
+// Create DOM elements for a list of ratings
 function getRatingElement(ratings) {
     const list = document.createElement('ul');
 
@@ -52,21 +49,17 @@ function getRatingElement(ratings) {
         const listItem = document.createElement('li');
         listItem.textContent = `${rating.Source}: ${rating.Value}`;
         list.appendChild(listItem);
+        list.classList.add('list');
     });
-
-    // for (const rating of ratings) {
-    //     const listItem = document.createElement('li');
-    //     listItem.textContent = `${rating.Source}: ${rating.Value}`;
-    //     list.appendChild(listItem);
-    // }
     return list;
 }
 
+// Get and populate DOM elements with relevent data
 function displayResults(movies, results) {
     loadingElement.style.display = 'none';
     const overlapCard = document.getElementById('overlap');
     const cards = document.getElementsByClassName('movieCard');
-    // Add movie1 and movie2 data to DOM
+    // Add each movies details to DOM
     for (let i = 0; i < movies.length; i += 1) {
         const element = movies[i];
         cards[i].getElementsByClassName('title')[0].textContent = element.Title;
@@ -83,34 +76,36 @@ function displayResults(movies, results) {
 
     // Add common data to DOM
     results.forEach((category) => {
-        const headingElement = document.createElement('h3');
-        const list = document.createElement('ul');
-        headingElement.textContent = category.title;
-        category.members.forEach((name) => {
-            const listElement = document.createElement('li');
-            listElement.textContent = name;
-            list.appendChild(listElement);
-        });
-        overlapCard.appendChild(headingElement);
-        overlapCard.appendChild(list);
-        overlapCard.style.display = 'block';
+        if (category.members.length > 0) {
+            const headingElement = document.createElement('h3');
+            const list = document.createElement('ul');
+            list.classList.add('list');
+            headingElement.textContent = category.title;
+            category.members.forEach((name) => {
+                const listElement = document.createElement('li');
+                listElement.textContent = name;
+                list.appendChild(listElement);
+            });
+            overlapCard.appendChild(headingElement);
+            overlapCard.appendChild(list);
+            overlapCard.style.display = 'block';
+        }
     });
 }
 
+// Asynchronous function to retreive and parse the json data for a list of urls
 async function getMovieData(urls) {
     loadingElement.style.display = 'block';
-
     const moviesRes = await Promise.all(
         urls.map((url) => fetch(url)),
     );
-
     const moviesJson = await Promise.all(
         moviesRes.map((document) => document.json()),
     );
-
     displayResults(moviesJson, getCommonElements(moviesJson));
 }
 
+// On submit of the form
 document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -118,23 +113,23 @@ document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
 
     const seachTerms = [...filmsElements].map((input) => input.value);
 
-    const urls = seachTerms.map((term) => `http://www.omdbapi.com/?${term.startsWith('tt') ? 'i' : 't'}=${term}&apikey=${APIKEY}`);
+    let urls = seachTerms.map((term) => `http://www.omdbapi.com/?${term.startsWith('tt') ? 'i' : 't'}=${term}&apikey=a3ed1e37`);
 
-    getMovieData(['film1.json', 'film2.json']);
+    // Debug (dummy data)
+    urls = ['film1.json', 'film2.json'];
+
+    getMovieData(urls);
 });
 
-function searchAutocomplete(term) {
-    return films.filter((a) => a.label.toLowerCase().includes(term.toLowerCase));
+function searchAutocomplete(req, res) {
+    if (films) {
+        const regex = RegExp(req.term.trim(), 'i');
+        res(films.filter((a) => regex.test(a.label)));
+    }
 }
 
 // eslint-disable-next-line no-undef
-$('#film1').autocomplete({
-    minLength: 3,
-    source: searchAutocomplete,
-});
-
-// eslint-disable-next-line no-undef
-$('#film2').autocomplete({
+$('.movieInput').autocomplete({
     minLength: 3,
     source: searchAutocomplete,
 });
