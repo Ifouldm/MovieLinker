@@ -1,115 +1,101 @@
 const APIKEY = 'a3ed1e37';
 const loadingElement = document.getElementById('loading');
-const film1Element = document.getElementById('film1');
-const film2Element = document.getElementById('film2');
-
-const films = [{
-        "value": "tt0111161",
-        "label": "The Shawshank Redemption (1994)"
-    },
-    {
-        "value": "tt0468569",
-        "label": "The Dark Knight (2008)"
-    },
-    {
-        "value": "tt1375666",
-        "label": "Inception (2010)"
-    },
-    {
-        "value": "tt0137523",
-        "label": "Fight Club (1999)"
-    },
-    {
-        "value": "tt0110912",
-        "label": "Pulp Fiction (1994)"
-    },
-    {
-        "value": "tt0109830",
-        "label": "Forrest Gump (1994)"
-    }
-];
-
-async function getMovieData(url1, url2) {
-    loadingElement.style.display = 'block';
-    const moviesRes = await Promise.all([
-        fetch(url1),
-        fetch(url2)
-    ]);
-
-    const moviesJson = await Promise.all([
-        moviesRes[0].json(),
-        moviesRes[1].json()
-    ]);
-
-    displayResults(moviesJson, getCommonElements(moviesJson));
-}
+const autocompleteJson = document.getElementById('autocompleteData');
+const filmInputs = document.getElementsByClassName('filmInputs');
+let films;
 
 function getCommonElements(movies) {
-    return [{
-            title: 'Directors',
-            members: movies[0].Director.split(',').filter(individual => movies[1].Director.split(',').includes(individual)),
-        },
-        {
-            title: 'Cast',
-            members: movies[0].Actors.split(',').filter(individual => movies[1].Actors.split(',').includes(individual)),
-        },
-        {
-            title: 'Writers',
-            members: movies[0].Writer.split(',').filter(individual => movies[1].Writer.split(',').includes(individual)),
-        }
-    ];
+  return [{
+    title: 'Directors',
+    members: movies[0].Director.split(',').filter((individual) => movies[1].Director.split(',').includes(individual)),
+  },
+  {
+    title: 'Cast',
+    members: movies[0].Actors.split(',').filter((individual) => movies[1].Actors.split(',').includes(individual)),
+  },
+  {
+    title: 'Writers',
+    members: movies[0].Writer.split(',').filter((individual) => movies[1].Writer.split(',').includes(individual)),
+  },
+  ];
 }
 
 function getRatingElement(ratings) {
-    const list = document.createElement('ul');
-    for (let rating of ratings) {
-        const listItem = document.createElement('li');
-        listItem.textContent = rating.Source + ": " + rating.Value;
-        list.appendChild(listItem);
-    }
-    return list;
+  const list = document.createElement('ul');
+  for (let i = 0; i < ratings.length; i += 1) {
+    const rating = ratings[i];
+    const listItem = document.createElement('li');
+    listItem.textContent = `${rating.Source}: ${rating.Value}`;
+    list.appendChild(listItem);
+  }
+  return list;
 }
 
 function displayResults(movies, results) {
-    loadingElement.style.display = 'none';
-    const overlapCard = document.getElementById('overlap');
-    const cards = document.getElementsByClassName('movieCard');
-    // Add movie1 and movie2 data to DOM
-    for (let i = 0; i < movies.length; i++) {
-        const element = movies[i];
-        cards[i].getElementsByClassName('title')[0].textContent = movies[i].Title;
-        cards[i].getElementsByClassName('poster')[0].setAttribute('src', movies[i].Poster);
-        cards[i].getElementsByClassName('plot')[0].textContent = 'Plot summary: ' + movies[i].Plot;
-        cards[i].getElementsByClassName('year')[0].textContent = 'Year: ' + movies[i].Year;
-        cards[i].getElementsByClassName('runtime')[0].textContent = 'Runtime: ' + movies[i].Runtime;
-        cards[i].getElementsByClassName('rated')[0].textContent = 'Rated: ' + movies[i].Rated;
-        cards[i].getElementsByClassName('genres')[0].textContent = 'Genres: ' + movies[i].Genre;
-        cards[i].getElementsByClassName('scores')[0].appendChild(getRatingElement(movies[i].Ratings));
-        cards[i].getElementsByClassName('imdbLink')[0].setAttribute('href', 'https://www.imdb.com/title/' + movies[i].imdbID);
-        cards[i].style.display = 'block';
-    }
+  loadingElement.style.display = 'none';
+  const overlapCard = document.getElementById('overlap');
+  const cards = document.getElementsByClassName('movieCard');
+  // Add movie1 and movie2 data to DOM
+  for (let i = 0; i < movies.length; i += 1) {
+    const movie = movies[i];
+    cards[i].getElementsByClassName('title')[0].textContent = movie.Title;
+    cards[i].getElementsByClassName('poster')[0].setAttribute('src', movie.Poster);
+    cards[i].getElementsByClassName('plot')[0].textContent = `Plot summary: ${movie.Plot}`;
+    cards[i].getElementsByClassName('year')[0].textContent = `Year: ${movie.Year}`;
+    cards[i].getElementsByClassName('runtime')[0].textContent = `Runtime: ${movie.Runtime}`;
+    cards[i].getElementsByClassName('rated')[0].textContent = `Rated: ${movie.Rated}`;
+    cards[i].getElementsByClassName('genres')[0].textContent = `Genres: ${movie.Genre}`;
+    cards[i].getElementsByClassName('scores')[0].appendChild(getRatingElement(movie.Ratings));
+    cards[i].getElementsByClassName('imdbLink')[0].setAttribute('href', `https://www.imdb.com/title/${movie.imdbID}`);
+    cards[i].style.display = 'block';
+  }
 
-    // Add common data to DOM
-    results.forEach(category => {
-        const headingElement = document.createElement('h3');
-        const list = document.createElement('ul');
-        headingElement.textContent = category.title;
-        category.members.forEach(name => {
-            const listElement = document.createElement('li');
-            listElement.textContent = name;
-            list.appendChild(listElement);
-        })
-        overlapCard.appendChild(headingElement);
-        overlapCard.appendChild(list);
-        overlapCard.style.display = 'block';
+  // Add common data to DOM
+  results.forEach((category) => {
+    const headingElement = document.createElement('h3');
+    const list = document.createElement('ul');
+    headingElement.textContent = category.title;
+    category.members.forEach((name) => {
+      const listElement = document.createElement('li');
+      listElement.textContent = name;
+      list.appendChild(listElement);
     });
+    overlapCard.appendChild(headingElement);
+    overlapCard.appendChild(list);
+    overlapCard.style.display = 'block';
+  });
 }
 
-function search(term, res) {
-    return films.filter(a => !a.label.toLowerCase().includes(term.toLowerCase));
+async function getMovieData(...urls) {
+  loadingElement.style.display = 'block';
+  const moviesRes = await Promise.all(urls.map((url) => fetch(url)));
+
+  const moviesJson = await Promise.all(moviesRes.map((res) => res.json()));
+
+  displayResults(moviesJson, getCommonElements(moviesJson));
 }
 
-$("#film1").autocomplete({
-    minLength: 3,
-    source: search
+document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  // VALIDATION ?
+
+  const urls = filmInputs.map((filmInput) => `http://www.omdbapi.com/?t=${filmInput.value}&apikey=${APIKEY}`);
+
+  getMovieData(urls);
+});
+
+autocompleteJson.addEventListener('load', () => {
+  console.log('data loaded');
+  films = autocompleteJson.json();
+});
+
+function search(term, response) {
+  console.log(films);
+  return films ? response(films.filter((a) => !a.label.toLowerCase().includes(term.toLowerCase))) : ['Loading...'];
+}
+
+$('.filmInput').autocomplete({
+  minLength: 3,
+  source: search,
 });
