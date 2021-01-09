@@ -15,7 +15,7 @@
     background-clip: padding-box;
     border: 1px solid #ced4da;
     border-radius: .25rem;
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 .movieInput:focus {
@@ -23,7 +23,7 @@
     background-color: #fff;
     border-color: #80bdff;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
 }
 
 .list {
@@ -32,7 +32,7 @@
     display: inline-block;
     flex-direction: column;
     text-align: start;
-    
+
 }
 
 .list li {
@@ -59,7 +59,7 @@
     display: inline-block;
     font-weight: 400;
     text-align: center;
-    vertical-align: middle; 
+    vertical-align: middle;
     width: 50%;
     margin: 0 auto;
     margin-bottom: 1em;
@@ -76,7 +76,7 @@
     color: #fff;
     background-color: #0069d9;
     border-color: #0062cc;
-    box-shadow: 0 0 0 0.2rem rgba(38,143,255,.5);
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, .5);
     outline: 0;
 }
 

@@ -1,5 +1,4 @@
 const loadingElement = document.getElementById('loading');
-
 let films;
 
 // Populate the autocomplete dictionary
@@ -9,7 +8,6 @@ async function getAutocompleteData() {
 }
 
 getAutocompleteData();
-
 // Search the searchField for the given searchTerm if it exists return true
 // TODO: improve comparison criteria
 function search(searchTerm, searchField) {
@@ -44,7 +42,6 @@ function getCommonElements(movies) {
 // Create DOM elements for a list of ratings
 function getRatingElement(ratings) {
     const list = document.createElement('ul');
-
     ratings.forEach((rating) => {
         const listItem = document.createElement('li');
         listItem.textContent = `${rating.Source}: ${rating.Value}`;
@@ -69,9 +66,18 @@ function displayResults(movies, results) {
         cards[i].getElementsByClassName('runtime')[0].textContent = `Runtime: ${element.Runtime}`;
         cards[i].getElementsByClassName('rated')[0].textContent = `Rated: ${element.Rated}`;
         cards[i].getElementsByClassName('genres')[0].textContent = `Genres: ${element.Genre}`;
+        cards[i].getElementsByClassName('scores')[0].innerHTML = '';
         cards[i].getElementsByClassName('scores')[0].appendChild(getRatingElement(element.Ratings));
         cards[i].getElementsByClassName('imdbLink')[0].setAttribute('href', `https://www.imdb.com/title/${element.imdbID}`);
         cards[i].style.display = 'block';
+    }
+
+    // No common elements
+    if (results.every((cat) => cat.members.length === 0)) {
+        const headingElement = document.createElement('h3');
+        headingElement.textContent = 'No common elements found';
+        overlapCard.appendChild(headingElement);
+        overlapCard.style.display = 'block';
     }
 
     // Add common data to DOM
@@ -91,19 +97,6 @@ function displayResults(movies, results) {
             overlapCard.style.display = 'block';
         }
     });
-    overlapCard.appendChild(headingElement);
-    overlapCard.appendChild(list);
-    overlapCard.style.display = 'block';
-  });
-}
-
-async function getMovieData(...urls) {
-  loadingElement.style.display = 'block';
-  const moviesRes = await Promise.all(urls.map((url) => fetch(url)));
-
-  const moviesJson = await Promise.all(moviesRes.map((res) => res.json()));
-
-  displayResults(moviesJson, getCommonElements(moviesJson));
 }
 
 // Resets the result data so that the search can re rerun
@@ -136,10 +129,10 @@ document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
 
     const seachTerms = [...filmsElements].map((input) => input.value);
 
-    let urls = seachTerms.map((term) => `http://www.omdbapi.com/?${term.startsWith('tt') ? 'i' : 't'}=${term}&apikey=a3ed1e37`);
+    const urls = seachTerms.map((term) => `http://www.omdbapi.com/?${term.startsWith('tt') ? 'i' : 't'}=${term}&apikey=a3ed1e37`);
 
     // Debug (dummy data)
-    urls = ['film1.json', 'film2.json'];
+    // urls = ['film1.json', 'film2.json'];
 
     getMovieData(urls);
 });
