@@ -1,64 +1,95 @@
-const APIKEY = 'a3ed1e37';
 const loadingElement = document.getElementById('loading');
-const autocompleteJson = document.getElementById('autocompleteData');
-const filmInputs = document.getElementsByClassName('filmInputs');
+
 let films;
 
+// Populate the autocomplete dictionary
+async function getAutocompleteData() {
+    const filmData = await fetch('data/data.json');
+    films = await filmData.json();
+}
+
+getAutocompleteData();
+
+// Search the searchField for the given searchTerm if it exists return true
+// TODO: improve comparison criteria
+function search(searchTerm, searchField) {
+    const sanitisedTerm = searchTerm
+        .replace(/[^\w\s]|_/g, '') // Remove punctuation etc
+        .trim() // Remove whitespace
+        .split(' ')
+        .slice(0, 2)
+        .join(' '); // get first 2 words
+    const regex = RegExp(sanitisedTerm, 'i');
+    return regex.test(searchField);
+}
+
+// Currently only works with 2 movies
+// TODO: allow multiple movies
 function getCommonElements(movies) {
-  return [{
-    title: 'Directors',
-    members: movies[0].Director.split(',').filter((individual) => movies[1].Director.split(',').includes(individual)),
-  },
-  {
-    title: 'Cast',
-    members: movies[0].Actors.split(',').filter((individual) => movies[1].Actors.split(',').includes(individual)),
-  },
-  {
-    title: 'Writers',
-    members: movies[0].Writer.split(',').filter((individual) => movies[1].Writer.split(',').includes(individual)),
-  },
-  ];
+    return [{
+        title: 'Directors',
+        members: movies[0].Director.split(',').filter((individual) => search(individual, movies[1].Director)),
+    },
+    {
+        title: 'Cast',
+        members: movies[0].Actors.split(',').filter((individual) => search(individual, movies[1].Actors)),
+    },
+    {
+        title: 'Writers',
+        members: movies[0].Writer.split(',').filter((individual) => search(individual, movies[1].Writer)),
+    },
+    ];
 }
 
+// Create DOM elements for a list of ratings
 function getRatingElement(ratings) {
-  const list = document.createElement('ul');
-  for (let i = 0; i < ratings.length; i += 1) {
-    const rating = ratings[i];
-    const listItem = document.createElement('li');
-    listItem.textContent = `${rating.Source}: ${rating.Value}`;
-    list.appendChild(listItem);
-  }
-  return list;
+    const list = document.createElement('ul');
+
+    ratings.forEach((rating) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${rating.Source}: ${rating.Value}`;
+        list.appendChild(listItem);
+        list.classList.add('list');
+    });
+    return list;
 }
 
+// Get and populate DOM elements with relevent data
 function displayResults(movies, results) {
-  loadingElement.style.display = 'none';
-  const overlapCard = document.getElementById('overlap');
-  const cards = document.getElementsByClassName('movieCard');
-  // Add movie1 and movie2 data to DOM
-  for (let i = 0; i < movies.length; i += 1) {
-    const movie = movies[i];
-    cards[i].getElementsByClassName('title')[0].textContent = movie.Title;
-    cards[i].getElementsByClassName('poster')[0].setAttribute('src', movie.Poster);
-    cards[i].getElementsByClassName('plot')[0].textContent = `Plot summary: ${movie.Plot}`;
-    cards[i].getElementsByClassName('year')[0].textContent = `Year: ${movie.Year}`;
-    cards[i].getElementsByClassName('runtime')[0].textContent = `Runtime: ${movie.Runtime}`;
-    cards[i].getElementsByClassName('rated')[0].textContent = `Rated: ${movie.Rated}`;
-    cards[i].getElementsByClassName('genres')[0].textContent = `Genres: ${movie.Genre}`;
-    cards[i].getElementsByClassName('scores')[0].appendChild(getRatingElement(movie.Ratings));
-    cards[i].getElementsByClassName('imdbLink')[0].setAttribute('href', `https://www.imdb.com/title/${movie.imdbID}`);
-    cards[i].style.display = 'block';
-  }
+    loadingElement.style.display = 'none';
+    const overlapCard = document.getElementById('overlap');
+    const cards = document.getElementsByClassName('movieCard');
+    // Add each movies details to DOM
+    for (let i = 0; i < movies.length; i += 1) {
+        const element = movies[i];
+        cards[i].getElementsByClassName('title')[0].textContent = element.Title;
+        cards[i].getElementsByClassName('poster')[0].setAttribute('src', element.Poster);
+        cards[i].getElementsByClassName('plot')[0].textContent = `Plot summary: ${element.Plot}`;
+        cards[i].getElementsByClassName('year')[0].textContent = `Year: ${element.Year}`;
+        cards[i].getElementsByClassName('runtime')[0].textContent = `Runtime: ${element.Runtime}`;
+        cards[i].getElementsByClassName('rated')[0].textContent = `Rated: ${element.Rated}`;
+        cards[i].getElementsByClassName('genres')[0].textContent = `Genres: ${element.Genre}`;
+        cards[i].getElementsByClassName('scores')[0].appendChild(getRatingElement(element.Ratings));
+        cards[i].getElementsByClassName('imdbLink')[0].setAttribute('href', `https://www.imdb.com/title/${element.imdbID}`);
+        cards[i].style.display = 'block';
+    }
 
-  // Add common data to DOM
-  results.forEach((category) => {
-    const headingElement = document.createElement('h3');
-    const list = document.createElement('ul');
-    headingElement.textContent = category.title;
-    category.members.forEach((name) => {
-      const listElement = document.createElement('li');
-      listElement.textContent = name;
-      list.appendChild(listElement);
+    // Add common data to DOM
+    results.forEach((category) => {
+        if (category.members.length > 0) {
+            const headingElement = document.createElement('h3');
+            const list = document.createElement('ul');
+            list.classList.add('list');
+            headingElement.textContent = category.title;
+            category.members.forEach((name) => {
+                const listElement = document.createElement('li');
+                listElement.textContent = name;
+                list.appendChild(listElement);
+            });
+            overlapCard.appendChild(headingElement);
+            overlapCard.appendChild(list);
+            overlapCard.style.display = 'block';
+        }
     });
     overlapCard.appendChild(headingElement);
     overlapCard.appendChild(list);
@@ -75,27 +106,54 @@ async function getMovieData(...urls) {
   displayResults(moviesJson, getCommonElements(moviesJson));
 }
 
-document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
-  event.preventDefault();
-
-  // VALIDATION ?
-
-  const urls = filmInputs.map((filmInput) => `http://www.omdbapi.com/?t=${filmInput.value}&apikey=${APIKEY}`);
-
-  getMovieData(urls);
-});
-
-autocompleteJson.addEventListener('load', () => {
-  console.log('data loaded');
-  films = autocompleteJson.json();
-});
-
-function search(term, response) {
-  console.log(films);
-  return films ? response(films.filter((a) => !a.label.toLowerCase().includes(term.toLowerCase))) : ['Loading...'];
+// Resets the result data so that the search can re rerun
+function reset() {
+    const overlapCard = document.getElementById('overlap');
+    const title = overlapCard.firstElementChild;
+    overlapCard.innerHTML = '';
+    overlapCard.appendChild(title);
 }
 
-$('.filmInput').autocomplete({
-  minLength: 3,
-  source: search,
+// Asynchronous function to retreive and parse the json data for a list of urls
+async function getMovieData(urls) {
+    loadingElement.style.display = 'block';
+    const moviesRes = await Promise.all(
+        urls.map((url) => fetch(url)),
+    );
+    const moviesJson = await Promise.all(
+        moviesRes.map((document) => document.json()),
+    );
+    displayResults(moviesJson, getCommonElements(moviesJson));
+}
+
+// On submit of the form
+document.getElementById('filmEntryForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    reset();
+
+    const filmsElements = document.getElementsByClassName('movieInput');
+
+    const seachTerms = [...filmsElements].map((input) => input.value);
+
+    let urls = seachTerms.map((term) => `http://www.omdbapi.com/?${term.startsWith('tt') ? 'i' : 't'}=${term}&apikey=a3ed1e37`);
+
+    // Debug (dummy data)
+    urls = ['film1.json', 'film2.json'];
+
+    getMovieData(urls);
+});
+
+// Autocomplete search algorthim, currently simple regex
+function searchAutocomplete(req, res) {
+    if (films) {
+        const regex = RegExp(req.term.trim(), 'i');
+        res(films.filter((film) => regex.test(film.label)));
+    }
+}
+
+// eslint-disable-next-line no-undef
+$('.movieInput').autocomplete({
+    minLength: 3,
+    source: searchAutocomplete,
 });

@@ -2,27 +2,47 @@
     font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-form {
+.movieInput {
     font-size: 1.5rem;
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    box-sizing:border-box;
 }
 
-input {
-    border-radius: 5px;
-    font-size: 1.5em;
-    padding: 0.25em;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #c2d2ff;
-    color: #747272;
+.movieInput:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 
-ul {
-    list-style-type: circle;
+.list {
+    list-style-type: none;
     list-style-position: inside;
+    display: inline-block;
+    flex-direction: column;
+    text-align: start;
+    
+}
+
+.list li {
+    border: 1px solid lightgray;
+    border-radius: 0.25rem;
+    padding: 10px 40px;
+    margin: 5px;
 }
 
 .container {
-    display: flex;
     width: 100%;
     justify-content: space-between;
 }
@@ -33,20 +53,41 @@ ul {
 }
 
 .button {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle; 
     width: 50%;
     margin: 0 auto;
-    padding: 0.5em;
-    font-size: 1.5em;
-    background-color: #c2e1ff;
-    color: #747272;
-    border-radius: 8px;
-    border: 0;
+    margin-bottom: 1em;
     box-shadow: 2px 2px 2px lightgray;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+}
+
+.button:focus {
+    color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
+    box-shadow: 0 0 0 0.2rem rgba(38,143,255,.5);
+    outline: 0;
+}
+
+.button:hover {
+    color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
 
 .card {
     margin: 20px;
-    width: 50%;
     padding: 10px;
     border-radius: 0.35rem;
     border-color: lightgray;
@@ -56,9 +97,44 @@ ul {
     text-align: center;
 }
 
+@media only screen and (min-width: 1024px) {
+    .container {
+        display: flex;
+    }
+
+    .card {
+        width: 50%;
+    }
+}
+
+.title {
+    color: #6c757d;
+    background-color: #d6d8d9;
+    padding: .75rem 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    font-size: 2em;
+}
+
+.poster {
+    max-width: 75%;
+}
+
+.imdbLink {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.imdbLink:hover {
+    color: #0056b3;
+}
+
 .overlapCard {
     display: none;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .movieCard {
