@@ -3,7 +3,7 @@ let films;
 
 // Populate the autocomplete dictionary
 async function getAutocompleteData() {
-    const filmData = await fetch('data/data.json');
+    const filmData = await fetch('assets/data.json');
     films = await filmData.json();
 }
 

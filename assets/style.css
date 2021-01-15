@@ -44,12 +44,42 @@
 
 .container {
     width: 100%;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
 .loading {
     display: none;
     margin: 20px auto;
+}
+
+/* Style the tab */
+.tabbar {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tabbar a {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    border-radius: 8px 8px 0 0;
+    text-decoration: none;
+}
+
+/* Change background color of buttons on hover */
+.tabbar a:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tabbar a.active {
+    border-color: #000000;
+    background-color: rgb(255, 255, 255);
 }
 
 .button {
@@ -70,6 +100,7 @@
     font-size: 1.5rem;
     line-height: 1.5;
     border-radius: .25rem;
+    text-decoration: none;
 }
 
 .button:focus {
@@ -87,6 +118,7 @@
 }
 
 .card {
+    width: 100%;
     margin: 20px;
     padding: 10px;
     border-radius: 0.35rem;
@@ -102,7 +134,7 @@
         display: flex;
     }
 
-    .card {
+    .moviecard {
         width: 50%;
     }
 }
